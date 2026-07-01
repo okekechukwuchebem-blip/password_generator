@@ -1,0 +1,97 @@
+# Password Rotation Configuration
+
+# Global settings
+global:
+  log_level: INFO
+  log_dir: ./logs
+  audit_retention_days: 365
+  timezone: UTC
+
+# Password generation settings
+password_generation:
+  default_complexity: high
+  min_length: 16
+  require_uppercase: true
+  require_lowercase: true
+  require_numbers: true
+  require_special_chars: true
+  special_chars: "!@#$%^&*()_+-=[]{}|;:,.<>?"
+
+# Password policy enforcement
+password_policy:
+  min_age_hours: 24          # Cannot change password before 24 hours
+  max_age_days: 90           # Password expires after 90 days
+  history_count: 5           # Cannot reuse last 5 passwords
+  failed_attempts_limit: 5   # Lock after 5 failed attempts
+  lockout_duration_minutes: 15
+  complexity_requirement: high
+
+# Rotation schedule (in hours)
+rotation_schedule:
+  database:
+    interval: 720            # 30 days
+    complexity: critical
+    backup_retention_days: 7
+  
+  api_keys:
+    interval: 168            # 7 days
+    complexity: high
+    backup_retention_days: 30
+  
+  ssh_keys:
+    interval: 360            # 15 days
+    complexity: high
+    backup_retention_days: 90
+  
+  service_accounts:
+    interval: 480            # 20 days
+    complexity: critical
+    backup_retention_days: 14
+
+# Logging configuration
+logging:
+  audit_log:
+    level: INFO
+    file: password_audit.log
+    rotation_mb: 10
+    backup_count: 5
+  
+  rotation_log:
+    level: INFO
+    file: password_rotation.log
+    rotation_mb: 10
+    backup_count: 5
+  
+  error_log:
+    level: ERROR
+    file: password_errors.log
+    rotation_mb: 10
+    backup_count: 10
+
+# Alert settings
+alerts:
+  enabled: true
+  failed_attempt_threshold: 5
+  notification_channels:
+    - email
+    - sms
+    - slack
+  critical_event_escalation: true
+
+# Security settings
+security:
+  encryption_enabled: true
+  encryption_algorithm: AES-256
+  store_password_hash: true
+  hash_algorithm: SHA256
+  tls_verify: true
+  enable_audit_trail: true
+
+# Compliance
+compliance:
+  standards:
+    - NIST_SP_800_63
+    - PCI_DSS
+    - SOC_2
+  audit_log_retention_years: 3
+  encryption_key_rotation_days: 365
